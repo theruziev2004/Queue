@@ -1,45 +1,25 @@
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
 
 type List struct {
-	root   *ListNode //first element
-	end    *ListNode // last element
-	lenght int
+	root   *ListNode
+	end    *ListNode
+	length int
+}
+
+func (receiver *List) len() int {
+	return receiver.length
 }
 
 func (receiver *List) PrintList() {
-	fmt.Println("Start print")
-	current := receiver.root //current - текущий
-	for current != nil{
+	fmt.Println("Start print...")
+	current := receiver.root
+	for current != nil {
 		fmt.Println(current)
 		current = current.Next
 	}
 	fmt.Println("Finish")
-}
-
-
-func (receiver *List) len() int {
-	return receiver.lenght
-}
-
-func (receiver *List) Add(node ListNode) {
-	if receiver.len() == 0 {
-		receiver.root = &node
-		receiver.end = &node
-		receiver.lenght++
-		return // ранний выход
-	}
-
-	////
-	LastElement := receiver.end /// храню предпоследнего человека
-	receiver.end.Next = &node
-	receiver.end = &node
-	receiver.end.Prev = LastElement
-	receiver.lenght++
-
 }
 
 type ListNode struct {
@@ -49,10 +29,48 @@ type ListNode struct {
 	Purchases int
 }
 
+func (receiver *List) Add(node ListNode) {
+	if receiver.len() == 0 {
+		receiver.root = &node
+		receiver.end = &node
+		receiver.length++
+		return
+	}
+	lastElement := receiver.end
+	receiver.end.Next = &node
+	receiver.end = &node
+	receiver.end.Prev = lastElement
+	receiver.length++
+}
+
+func (receiver *List) PopLast() {
+	if receiver.len() == 0 {
+		return
+	}
+
+	previousToDelete := receiver.root
+	for previousToDelete.Next.Next != nil {
+		previousToDelete = previousToDelete.Next
+	}
+	previousToDelete.Next = nil
+	previousToDelete = receiver.end
+	receiver.length--
+}
+
+func (receiver *List) PopFirst() {
+	if receiver.len() == 0 {
+		return
+	}
+	nextToDelete := receiver.root.Next
+	receiver.root = nextToDelete
+	nextToDelete.Prev = nil
+	receiver.length--
+}
+
 func main() {
 	person := ListNode{
-		Next:      nil,
 		Prev:      nil,
+		Next:      nil,
 		Name:      "Rustam",
 		Purchases: 100,
 	}
@@ -61,25 +79,35 @@ func main() {
 	fmt.Println(queue)
 
 	person = ListNode{
-		Next:      nil,
 		Prev:      nil,
-		Name:      "Umed",
-		Purchases: 150,
+		Next:      nil,
+		Name:      "Surush",
+		Purchases: 200,
+	}
+
+	queue.Add(person)
+	fmt.Println(queue)
+
+	person = ListNode{
+		Prev:      nil,
+		Next:      nil,
+		Name:      "Aziz",
+		Purchases: 300,
 	}
 	queue.Add(person)
 	fmt.Println(queue)
 
 	person = ListNode{
-		Next:      nil,
 		Prev:      nil,
-		Name:      "Surush",
-		Purchases: 120,
+		Next:      nil,
+		Name:      "Amin",
+		Purchases: 400,
 	}
 	queue.Add(person)
-	fmt.Println(queue)
 
 	queue.PrintList()
 
-	fmt.Println(queue.root)
-	fmt.Println(queue.end)
+	queue.PopLast()
+	queue.PrintList()
+
 }
